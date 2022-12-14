@@ -166,6 +166,7 @@ GameObject:
   - component: {fileID: 1013704460}
   - component: {fileID: 1013704459}
   - component: {fileID: 1013704462}
+  - component: {fileID: 1013704463}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -259,6 +260,20 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &1013704463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013704458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d11f730369deb2428f44309769390a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followTarget: {fileID: 1412886576}
+  moveSpeed: 1
 --- !u!1 &1412886574
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursor: {fileID: 1412886574}
-  speed: 10
+  speed: 5
   characterPrefab: {fileID: 9178814217736420340, guid: 636f1a64eb71d3a4dbe95cdd622f4f3d, type: 3}
 --- !u!4 &1553470045
 Transform:
