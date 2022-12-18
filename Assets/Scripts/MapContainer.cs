@@ -73,7 +73,7 @@ public class MapContainer : MonoBehaviour
         {
             for (int y = -1; y <= 1; y++)
             {
-                if (x == 0 && y == 0)
+                if (x == y || x == -y)
                     continue;
 
                 Vector2Int tileToCheck = new Vector2Int(originTile.x + x, originTile.y + y);
