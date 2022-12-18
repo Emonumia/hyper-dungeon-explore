@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static PathDrawer;
 
 /* Prototype : GetFocusedOnTile
  * 
@@ -22,12 +23,20 @@ public class MouseController : MonoBehaviour
 
     private Character character;
     private PathFinder pathFinder;
+    private RangeFinder rangeFinder;
     private List<VisualizeTile> path;
+    private List<VisualizeTile> rangeFinderTiles;
+    private bool isMoving;
+    private PathDrawer pathDrawer;
     // Start is called before the first frame update
     void Start()
     {
         pathFinder = new PathFinder();
         path = new List<VisualizeTile>();
+        rangeFinder = new RangeFinder();
+        pathDrawer = new PathDrawer();
+        isMoving = false;
+        rangeFinderTiles = new List<VisualizeTile>();
     }
 
     // Update is called once per frame
@@ -39,27 +48,46 @@ public class MouseController : MonoBehaviour
         {
             VisualizeTile tile = hit.Value.collider.gameObject.GetComponent<VisualizeTile>();
             cursor.transform.position = tile.transform.position;
-            cursor.gameObject.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
+            cursor.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
+
+            if (rangeFinderTiles.Contains(tile) && !isMoving)
+            {
+                path = pathFinder.FindPath(character.standingOnTile, tile, rangeFinderTiles);
+
+                foreach (var item in rangeFinderTiles)
+                {
+                    MapContainer.Instance.map[item.grid2DLocation].SetSprite(ArrowDirection.None);
+                }
+
+                for (int i = 0; i < path.Count; i++)
+                {
+                    var previousTile = i > 0 ? path[i - 1] : character.standingOnTile;
+                    var futureTile = i < path.Count - 1 ? path[i + 1] : null;
+
+                    var arrow = pathDrawer.TranslateDirection(previousTile, path[i], futureTile);
+                    path[i].SetSprite(arrow); //***
+                }
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
-                tile.gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+                tile.ShowTile();
 
                 if (character == null)
                 {
                     character = Instantiate(characterPrefab).GetComponent<Character>();
                     PositionCharacterOnLine(tile);
-                    character.standingOnTile = tile;
+                    GetInRangeTiles();
                 }
                 else
                 {
-                    path = pathFinder.FindPath(character.standingOnTile, tile);
-
+                    isMoving = true;
                     tile.gameObject.GetComponent<VisualizeTile>().HideTile();
                 }
             }
         }
 
-        if (path.Count > 0)
+        if (path.Count > 0 && isMoving)
         {
             MoveAlongPath();
         }
@@ -80,7 +108,7 @@ public class MouseController : MonoBehaviour
         return null;
     }
 
-        private void PositionCharacterOnLine(VisualizeTile tile)
+    private void PositionCharacterOnLine(VisualizeTile tile)
     {
         character.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y + 0.0001f, tile.transform.position.z);
         character.GetComponent<SpriteRenderer>().sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder;
@@ -99,6 +127,22 @@ public class MouseController : MonoBehaviour
         {
             PositionCharacterOnLine(path[0]);
             path.RemoveAt(0);
+        }
+
+        if (path.Count == 0)
+        {
+            GetInRangeTiles();
+            isMoving = false;
+        }
+    }
+
+    private void GetInRangeTiles()
+    {
+        rangeFinderTiles = rangeFinder.GetTilesInRange(new Vector2Int(character.standingOnTile.gridLocation.x, character.standingOnTile.gridLocation.y), 3);//here is the range
+
+        foreach (var item in rangeFinderTiles)
+        {
+            item.ShowTile();
         }
     }
 }

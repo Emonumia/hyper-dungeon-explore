@@ -64,11 +64,26 @@ public class MapContainer : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
-    /*void Update()
+  
+    public List<VisualizeTile> GetSurroundingTiles(Vector2Int originTile)
     {
+        var surroundingTiles = new List<VisualizeTile>();
 
-    }*/
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                Vector2Int tileToCheck = new Vector2Int(originTile.x + x, originTile.y + y);
+                if (map.ContainsKey(tileToCheck) && Mathf.Abs(map[tileToCheck].transform.position.z - map[originTile].transform.position.z) <= 1)
+                    surroundingTiles.Add(map[tileToCheck]);
+            }
+        }
+
+        return surroundingTiles;
+    }
+  
 }
 
