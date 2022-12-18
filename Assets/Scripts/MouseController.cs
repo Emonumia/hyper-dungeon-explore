@@ -123,6 +123,25 @@ public class MouseController : MonoBehaviour
         character.transform.position = Vector2.MoveTowards(character.transform.position, path[0].transform.position, step);
         character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
 
+       /*var step = speed * Time.deltaTime;
+
+        float zIndex = path[0].transform.position.z;
+        Vector3 targetPos = path[0].transform.position;
+
+        // Only move in the horizontal or vertical direction, depending on which brings the character closer to the target tile
+        if (Mathf.Abs(character.transform.position.x - targetPos.x) > Mathf.Abs(character.transform.position.y - targetPos.y))
+        {
+            targetPos.y = character.transform.position.y;
+        }
+        else
+        {
+            targetPos.x = character.transform.position.x;
+        }
+
+        character.transform.position = Vector2.MoveTowards(character.transform.position, targetPos, step);
+        character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
+        Makes the guy giggle giggle*/
+
         if (Vector2.Distance(character.transform.position, path[0].transform.position) < 0.00001f)
         {
             PositionCharacterOnLine(path[0]);
@@ -135,7 +154,7 @@ public class MouseController : MonoBehaviour
             isMoving = false;
         }
     }
-
+   
     private void GetInRangeTiles()
     {
         rangeFinderTiles = rangeFinder.GetTilesInRange(new Vector2Int(character.standingOnTile.gridLocation.x, character.standingOnTile.gridLocation.y), 3);//here is the range
