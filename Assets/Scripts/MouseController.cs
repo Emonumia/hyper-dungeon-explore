@@ -4,15 +4,25 @@ using UnityEngine;
 using static PathDrawer;
 
 /* Prototype : GetFocusedOnTile
- * 
+ *   This function uses a raycast to detect which tile the mouse is currently hovering over.
+ *   If a tile is found, the function returns the RaycastHit2D object for that tile. 
+ *   Otherwise, it returns null
  * 
  * Prototype : PositionCharacterOnLine
+ *   This function positions the character on top of a specified tile.
+ *   It sets the character's standingOnTile property to the tile that it is standing on.
  * 
+ * Protoype : MoveAlongPath
+ *   This function moves the character along a specified path. 
+ *   It calculates the character's position at each step along the path and
+ *   updates the character's position accordingly.
  * 
- * Protoype : private void MoveAlongPath
- * 
+ * Prototype : GetInRangeTiles
+ *   This function uses the RangeFinder to find all the tiles within the character's range, 
+ *   and sets the rangeFinderTiles variable to the list of tiles that were found.
  * 
  * */
+
 
 
 public class MouseController : MonoBehaviour
@@ -20,7 +30,6 @@ public class MouseController : MonoBehaviour
     public GameObject cursor;
     public float speed;
     public GameObject characterPrefab;
-
     private Character character;
     private PathFinder pathFinder;
     private RangeFinder rangeFinder;
@@ -28,9 +37,14 @@ public class MouseController : MonoBehaviour
     private List<VisualizeTile> rangeFinderTiles;
     private bool isMoving;
     private PathDrawer pathDrawer;
+    public GameObject mechant;
+    public GameObject gentil;
+
     // Start is called before the first frame update
     void Start()
     {
+        GameObject mechant = GameObject.FindGameObjectWithTag("Ennemies");
+        GameObject gentil = GameObject.FindGameObjectWithTag("Heroes");
         pathFinder = new PathFinder();
         path = new List<VisualizeTile>();
         rangeFinder = new RangeFinder();
@@ -42,6 +56,7 @@ public class MouseController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+
         RaycastHit2D? hit = GetFocusedOnTile();
 
         if (hit.HasValue)
@@ -71,13 +86,27 @@ public class MouseController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                tile.ShowTile();
+                //tile.ShowTile();
 
                 if (character == null)
                 {
                     character = Instantiate(characterPrefab).GetComponent<Character>();
                     PositionCharacterOnLine(tile);
                     GetInRangeTiles();
+                }
+                else if (path.Count == 0)
+                {
+                    isMoving = false;
+                    if (mechant.activeSelf && !gentil.activeSelf)
+                    {
+                        gentil.SetActive(true);
+                        mechant.SetActive(false);
+                    }
+                    else if (gentil.activeSelf && !mechant.activeSelf)
+                    {
+                        gentil.SetActive(false);
+                        mechant.SetActive(true);
+                    }
                 }
                 else
                 {
@@ -91,6 +120,30 @@ public class MouseController : MonoBehaviour
         {
             MoveAlongPath();
         }
+
+        /*if (path.Count == 0 && Input.GetMouseButtonDown(0))
+        {
+            isMoving = false;
+            if (mechant.activeSelf && !gentil.activeSelf)
+            {
+                gentil.SetActive(true);
+                mechant.SetActive(false);
+                GetInRangeTiles();
+            }
+            else if (gentil.activeSelf && !mechant.activeSelf)
+            {
+                gentil.SetActive(false);
+                mechant.SetActive(true);
+                GetInRangeTiles();
+            }
+        }
+
+        if (path.Count == 0)
+        {
+
+        }*/
+
+
     }
 
     public RaycastHit2D? GetFocusedOnTile()
@@ -117,12 +170,12 @@ public class MouseController : MonoBehaviour
 
     private void MoveAlongPath()
     {
-        var step = speed * Time.deltaTime;
+        /*var step = speed * Time.deltaTime;
 
         float zIndex = path[0].transform.position.z;
         character.transform.position = Vector2.MoveTowards(character.transform.position, path[0].transform.position, step);
-        character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
-        /*var step = speed * Time.deltaTime;
+        character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);*/
+        var step = speed * Time.deltaTime;
         float zIndex = path[0].transform.position.z;
         Vector3 targetPos = path[0].transform.position;
         // Only move in the horizontal or vertical direction, depending on which brings the character closer to the target tile
@@ -136,7 +189,7 @@ public class MouseController : MonoBehaviour
         }
         character.transform.position = Vector2.MoveTowards(character.transform.position, targetPos, step);
         character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
-        Makes the guy giggle giggle*/
+        /*Makes the guy giggle giggle, add some ugly anim when going up and down | UP: doesn't function properly when the project is build and creates poor perf*/
         if (Vector2.Distance(character.transform.position, path[0].transform.position) < 0.00001f)
         {
             PositionCharacterOnLine(path[0]);

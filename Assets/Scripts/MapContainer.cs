@@ -3,7 +3,12 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
+/* Prototype : GetSurroundingTiles
+ *  This function takes in a Vector2Int representing the location of a tile, and returns a list of tiles that are adjacent to the specified tile.
+ *  The function checks each tile within a 3x3 grid centered on the specified tile, 
+ *  and adds any tiles that are adjacent to the specified tile (i.e., tiles that share a side with the specified tile) to the list of surrounding tiles.
+ * 
+ * */
 
 public class MapContainer : MonoBehaviour
 {
