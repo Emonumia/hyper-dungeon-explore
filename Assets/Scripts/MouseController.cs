@@ -30,8 +30,8 @@ public class MouseController : MonoBehaviour
         path = new List<VisualizeTile>();
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+// Update is called once per frame
+void LateUpdate()
     {
         RaycastHit2D? hit = GetFocusedOnTile();
 

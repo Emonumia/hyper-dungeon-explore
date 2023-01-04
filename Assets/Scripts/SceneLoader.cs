@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TestButton : MonoBehaviour
+public class SceneLoader : MonoBehaviour
 {
-    public void LoadScene(string Main)
+    public void LoadScene(string Scene)
     {
-        SceneManager.LoadScene(Main);
+        SceneManager.LoadScene(Scene);
     }
 }
