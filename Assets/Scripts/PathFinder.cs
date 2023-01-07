@@ -85,7 +85,7 @@ public class PathFinder
 
     private List<VisualizeTile> GetNeightbourOverlayTiles(VisualizeTile currentOverlayTile)
     {
-        var map = MapContainer.Instance.map;
+        var map = MapContainer.Singleton.map;
 
         List<VisualizeTile> neighbours = new List<VisualizeTile>();
 
