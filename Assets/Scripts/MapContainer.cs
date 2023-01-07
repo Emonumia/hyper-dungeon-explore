@@ -3,11 +3,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
-
 public class MapContainer : MonoBehaviour
 {
-    public static MapContainer Instance { get; private set; }
+    public static MapContainer Singleton { get; private set; }
 
     public GameObject overlayPrefab;
     public GameObject overlayContainer;
@@ -17,9 +15,9 @@ public class MapContainer : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null || Instance == this)
+        if (Singleton == null)
         {
-            Instance = this;
+            Singleton = this;
         }
         else
         {
@@ -46,29 +44,19 @@ public class MapContainer : MonoBehaviour
                         if (z == 0 && ignoreBottomTiles)
                             return;
 
-                        if (tm.HasTile(new Vector3Int(x, y, z)))
+                        if (tm.HasTile(new Vector3Int(x, y, z)) && !map.ContainsKey(new Vector2Int(x, y)))
                         {
-                            if (!map.ContainsKey(new Vector2Int(x, y)))
-                            {
-                                var overlayTile = Instantiate(overlayPrefab, overlayContainer.transform);
-                                var cellWorldPosition = tm.GetCellCenterWorld(new Vector3Int(x, y, z));
-                                overlayTile.transform.position = new Vector3(cellWorldPosition.x, cellWorldPosition.y, cellWorldPosition.z + 1);
-                                overlayTile.GetComponent<SpriteRenderer>().sortingOrder = tm.GetComponent<TilemapRenderer>().sortingOrder;
-                                overlayTile.GetComponent<VisualizeTile>().gridLocation = new Vector3Int(x, y, z);
+                            var overlayTile = Instantiate(overlayPrefab, overlayContainer.transform);
+                            var cellWorldPosition = tm.GetCellCenterWorld(new Vector3Int(x, y, z));
+                            overlayTile.transform.position = new Vector3(cellWorldPosition.x, cellWorldPosition.y, cellWorldPosition.z + 1);
+                            overlayTile.GetComponent<SpriteRenderer>().sortingOrder = tm.GetComponent<TilemapRenderer>().sortingOrder;
+                            overlayTile.GetComponent<VisualizeTile>().gridLocation = new Vector3Int(x, y, z);
 
-                                map.Add(new Vector2Int(x, y), overlayTile.GetComponent<VisualizeTile>());
-                            }
+                            map.Add(new Vector2Int(x, y), overlayTile.GetComponent<VisualizeTile>());
                         }
                     }
                 }
             }
         }
     }
-
-    // Update is called once per frame
-    /*void Update()
-    {
-
-    }*/
 }
-
