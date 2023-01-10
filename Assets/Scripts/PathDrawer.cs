@@ -18,7 +18,7 @@ public class PathDrawer
         LeftFinished = 11,
         RightFinished = 12
     }
-    
+
     public ArrowDirection TranslateDirection(VisualizeTile previousTile, VisualizeTile currentTile, VisualizeTile futureTile)
     {
         bool isFinal = futureTile == null;
@@ -69,6 +69,6 @@ public class PathDrawer
 
         return ArrowDirection.None;
     }
-    
+
 }
 

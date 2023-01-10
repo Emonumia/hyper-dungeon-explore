@@ -39,6 +39,8 @@ public class MouseController : MonoBehaviour
     private PathDrawer pathDrawer;
     public GameObject mechant;
     public GameObject gentil;
+    int e = 0;
+    int c = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -56,7 +58,6 @@ public class MouseController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-
         RaycastHit2D? hit = GetFocusedOnTile();
 
         if (hit.HasValue)
@@ -90,9 +91,14 @@ public class MouseController : MonoBehaviour
 
                 if (character == null)
                 {
-                    character = Instantiate(characterPrefab).GetComponent<Character>();
-                    PositionCharacterOnLine(tile);
-                    GetInRangeTiles();
+                    if (e == 0 || c == 0)
+                    {
+                        character = Instantiate(characterPrefab).GetComponent<Character>();
+                        PositionCharacterOnLine(tile);
+                        GetInRangeTiles();
+                        e++;
+                    }
+
                 }
                 else if (path.Count == 0)
                 {
@@ -107,6 +113,7 @@ public class MouseController : MonoBehaviour
                         gentil.SetActive(false);
                         mechant.SetActive(true);
                     }
+                    c++;
                 }
                 else
                 {
@@ -120,29 +127,7 @@ public class MouseController : MonoBehaviour
         {
             MoveAlongPath();
         }
-
-        /*if (path.Count == 0 && Input.GetMouseButtonDown(0))
-        {
-            isMoving = false;
-            if (mechant.activeSelf && !gentil.activeSelf)
-            {
-                gentil.SetActive(true);
-                mechant.SetActive(false);
-                GetInRangeTiles();
-            }
-            else if (gentil.activeSelf && !mechant.activeSelf)
-            {
-                gentil.SetActive(false);
-                mechant.SetActive(true);
-                GetInRangeTiles();
-            }
-        }
-
-        if (path.Count == 0)
-        {
-
-        }*/
-
+        e++;
 
     }
 
@@ -170,12 +155,12 @@ public class MouseController : MonoBehaviour
 
     private void MoveAlongPath()
     {
-        /*var step = speed * Time.deltaTime;
+        var step = speed * Time.deltaTime;
 
         float zIndex = path[0].transform.position.z;
         character.transform.position = Vector2.MoveTowards(character.transform.position, path[0].transform.position, step);
-        character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);*/
-        var step = speed * Time.deltaTime;
+        character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
+        /*var step = speed * Time.deltaTime;
         float zIndex = path[0].transform.position.z;
         Vector3 targetPos = path[0].transform.position;
         // Only move in the horizontal or vertical direction, depending on which brings the character closer to the target tile
