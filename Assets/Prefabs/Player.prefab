@@ -133,6 +133,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 229815957469177757}
   numberText: {fileID: 6308997481996001647}
   hpText: {fileID: 2798259840055333146}
+  HP: 100
   hpColors:
   - hp: 20
     color: {r: 0.7735849, g: 0.08392668, b: 0.08392668, a: 1}
@@ -143,6 +144,7 @@ MonoBehaviour:
   standingOnTile: {fileID: 0}
   hasMoved: 0
   hasAttacked: 0
+  number: 0
 --- !u!1 &6820232274476452860
 GameObject:
   m_ObjectHideFlags: 0
