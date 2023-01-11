@@ -18,5 +18,6 @@ public class BlinkController : MonoBehaviour
         //blinkImage.image.enabled = true;
         blinkSprite.StopAllCoroutines();
         blinkSprite.sprite.GetComponent<SpriteRenderer>().enabled = true;
+        //blinkSprite.spriteRenderer.enabled = true;
     }
 }

@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class GameplayHelper : MonoBehaviour
 {
@@ -35,6 +34,7 @@ public class GameplayHelper : MonoBehaviour
     private int damage;
     [SerializeField]
     private int damageVariation;
+    public float blinkIntervalSprite = 0.3f;
 
     [Header("Pathfinding")]
     [SerializeField]
@@ -50,14 +50,18 @@ public class GameplayHelper : MonoBehaviour
     private PathFinder pathFinder = new PathFinder();
     private List<Character> characters = new List<Character>();
     private int currentPlayer = 0;
+    private Character attackedOne;
 
     private float _playerCount = 1f;
 
-    public float playerCount {
-        get {
+    public float playerCount
+    {
+        get
+        {
             return _playerCount;
         }
-        set {
+        set
+        {
             _playerCount = value;
             playerCountText.text = value.ToString();
         }
@@ -86,7 +90,7 @@ public class GameplayHelper : MonoBehaviour
         {
             GameObject player = Instantiate(playerPrefab, transform);
             Character character = player.GetComponent<Character>();
-            character.SetupPlayer(this, players[i]);
+            character.SetupPlayer(this, players[i]);   //******************************
             characters.Add(character);
             mouseController.MoveTo(character, Vector2.zero);
         }
@@ -105,37 +109,54 @@ public class GameplayHelper : MonoBehaviour
         }
     }
 
-    public CursorClickType CursorClick() {
-        if (!GetCurrentCharacter().hasMoved) {
+    public CursorClickType CursorClick()
+    {
+        if (!GetCurrentCharacter().hasMoved)
+        {
             GetCurrentCharacter().hasMoved = true;
             currentPhaseText.text = "Attack";
             return CursorClickType.Move;
-        } else if (!GetCurrentCharacter().hasAttacked) {
+        }
+        else if (!GetCurrentCharacter().hasAttacked)
+        {
             GetCurrentCharacter().hasAttacked = true;
             currentPhaseText.text = "Turn End";
             return CursorClickType.Attack;
-        } else {
+        }
+        else
+        {
             return CursorClickType.None;
         }
     }
 
-    public void Attack(VisualizeTile tile) {
+    public void Attack(VisualizeTile tile)
+    {
         List<Character> localCharacters = new List<Character>(characters);
-        localCharacters.ForEach(character => {
-            if (character.standingOnTile == tile && character != GetCurrentCharacter() && characters.Contains(character)) {
+        localCharacters.ForEach(character =>
+        {
+            if (character.standingOnTile == tile && character != GetCurrentCharacter() && characters.Contains(character))
+            {
                 character.Damage(damage + Mathf.RoundToInt(Random.Range(-damageVariation, damageVariation)));
+                StartBlinkingSprite(character);
+                attackedOne = character;
+                
             }
+
         });
     }
 
-    public void EndTurnClick() {
+    public void EndTurnClick()
+    {
         // Reset character
         GetCurrentCharacter().hasMoved = false;
         GetCurrentCharacter().hasAttacked = false;
+        if(attackedOne!=null)
+        StopBlinking(attackedOne);
 
         // Next player
         currentPlayer++;
-        if (currentPlayer >= characters.Count) {
+        if (currentPlayer >= characters.Count)
+        {
             currentPlayer = 0;
         }
 
@@ -145,13 +166,15 @@ public class GameplayHelper : MonoBehaviour
         currentPhaseText.text = "Move";
     }
 
-    public void Die(Character character) {
+    public void Die(Character character)
+    {
         characters.Remove(character);
         players.Remove(players.Find(p => p.number == character.number));
         Destroy(character.gameObject);
         currentPlayer--;
 
-        if (characters.Count <= 1) {
+        if (characters.Count <= 1)
+        {
             // UI
             gameplayInterface.SetActive(false);
             endInterface.SetActive(true);
@@ -160,7 +183,37 @@ public class GameplayHelper : MonoBehaviour
         }
     }
 
-    public Character GetCurrentCharacter() {
+    public Character GetCurrentCharacter()
+    {
         return characters[currentPlayer];
     }
+
+    public void StartBlinkingSprite(Character character)
+    {
+        StopAllCoroutines();
+        StartCoroutine(DoBlinkSprite(character));
+    }
+
+    private IEnumerator DoBlinkSprite(Character character)
+    {
+        while (true)
+        {
+            //spriteRenderer.enabled = !spriteRenderer.enabled;
+
+            character.GetComponent<SpriteRenderer>().enabled = !character.GetComponent<SpriteRenderer>().enabled;
+            yield return new WaitForSeconds(blinkIntervalSprite);
+        }
+    }
+
+
+    public void StopBlinking(Character character)
+    {
+        StopAllCoroutines();
+        character.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    /*public void Wrapper(Character character)
+    {
+        StopBlinking(character);
+    }*/
 }

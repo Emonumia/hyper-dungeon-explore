@@ -67,7 +67,6 @@ public class Character : MonoBehaviour
         HP -= damage;
         healthBar.SetHealth(HP);
         //hpText.text = HP.ToString()+ "HP";
-        //blinkController.StartBlinking();
         if (HP <= 0)
         {
             game.Die(this);
