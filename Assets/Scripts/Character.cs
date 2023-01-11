@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 [System.Serializable]
-public class HPColor {
+/*public class HPColor {
     public int hp;
     public Color color;
-}
+}*/
 
 public class Character : MonoBehaviour
 {
@@ -16,15 +14,15 @@ public class Character : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     [SerializeField]
     private TMP_Text numberText;
-    [SerializeField]
-    private TMP_Text hpText;
+    /*[SerializeField]
+    private TMP_Text hpText;*/
 
     [Header("HP")]
     [SerializeField]
     private int HP = 100;
-    [Tooltip("Couleur quand HP <= value")]
+    /*[Tooltip("Couleur quand HP <= value")]
     [SerializeField]
-    private List<HPColor> hpColors;
+    private List<HPColor> hpColors;*/
 
     [HideInInspector]
     public VisualizeTile standingOnTile;
@@ -38,10 +36,22 @@ public class Character : MonoBehaviour
     [HideInInspector]
     public int number;
 
+    [HideInInspector]
+    public BlinkController blinkController;
+
     private GameplayHelper game;
+    [Header("Health Bar")]
+    public HealthBar healthBar;
 
 
-    public void SetupPlayer(GameplayHelper game, PlayerSerializable player) {
+    private void Start()
+    {
+        healthBar.SetMaxHealth(HP);
+    }
+
+
+    public void SetupPlayer(GameplayHelper game, PlayerSerializable player)
+    {
         this.game = game;
         this.number = player.number;
         // Player Data Setup
@@ -52,12 +62,17 @@ public class Character : MonoBehaviour
         Damage(0);
     }
 
-    public void Damage(int damage) {
+    public void Damage(int damage)
+    {
         HP -= damage;
-        hpText.text = HP.ToString()+ "HP";
-        if (HP <= 0) {
+        healthBar.SetHealth(HP);
+        //hpText.text = HP.ToString()+ "HP";
+        //blinkController.StartBlinking();
+        if (HP <= 0)
+        {
             game.Die(this);
         }
+        /*
         else {
             foreach (HPColor hpColor in hpColors) {
                 if (HP <= hpColor.hp) {
@@ -65,6 +80,6 @@ public class Character : MonoBehaviour
                     break;
                 }
             }
-        }
+        }*/
     }
 }
